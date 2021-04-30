@@ -1,11 +1,12 @@
-import pygame, sys
-from pygame.locals import *
 import traceback
+
+import pygame
+import sys
+from pygame.locals import *
 
 if not pygame.font: print('Warning, fonts disabled')
 if not pygame.mixer: print('Warning, sound disabled')
 
-from GLOBAL import *
 from sound import load_sound, load_music
 from myfont import *
 from items import *
