@@ -3,7 +3,7 @@ from pygame import mixer, error
 # from pygame.compat import geterror
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
-sound_dir = os.path.join(main_dir, '../sound')
+sound_dir = os.path.join(main_dir, '../src/sound')
 
 
 def load_sound(name, volume):
