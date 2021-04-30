@@ -137,10 +137,10 @@ def main():
     score1_text = MyFont(screen, score_font, "P1 : %s" % str(score1))
     score2_text = MyFont(screen, score_font, "P2 : %s" % str(score2))
     number_text = MyFont(screen, score_font, " ")
-    w1 = width//2
-    w2 = width//4
-    h1 = height//2
-    h2 = height//4
+    w1 = width // 2
+    w2 = width // 4
+    h1 = height // 2
+    h2 = height // 4
     pause_text.move_center((w1, h1))
     restart_text.move_center((w1, h2))
     score1_text.move_center((w2, h1))
