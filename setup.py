@@ -1,6 +1,6 @@
-# mysetup.py
+# setup.py
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 import glob
 

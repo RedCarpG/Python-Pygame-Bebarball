@@ -7,7 +7,10 @@ from pygame.locals import *
 if not pygame.font: print('Warning, fonts disabled')
 if not pygame.mixer: print('Warning, sound disabled')
 
-from bebarball.generic import load_sound, load_music
+from generic.sound import load_sound, load_music
+from generic.myfont import load_font, MyFont
+from generic.items import Ball, Bar
+from generic.GLOBAL import *
 
 # 初始化pygame Init Pygame
 pygame.init()
