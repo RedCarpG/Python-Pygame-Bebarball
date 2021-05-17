@@ -2,5 +2,5 @@
 .vscode
 __pycache__
 .idea
-build
-dist
+build/build
+build/dist
