@@ -7,10 +7,10 @@ from pygame.locals import *
 if not pygame.font: print('Warning, fonts disabled')
 if not pygame.mixer: print('Warning, sound disabled')
 
-from generic.sound import load_sound, load_music
-from generic.myfont import load_font, MyFont
-from generic.items import Ball, Bar
-from generic.GLOBAL import *
+from bin.sound import load_sound, load_music
+from bin.myfont import load_font, MyFont
+from bin.items import Ball, Bar
+from bin.GLOBAL import *
 
 # 初始化pygame Init Pygame
 pygame.init()

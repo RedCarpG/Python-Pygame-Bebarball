@@ -3,7 +3,7 @@ import pygame.font as pyfont
 from pygame import error
 from pygame.compat import geterror
 
-from generic.GLOBAL import *
+from bin.GLOBAL import *
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 font_dir = os.path.join(main_dir, '../src/font')
