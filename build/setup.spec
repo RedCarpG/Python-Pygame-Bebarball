@@ -12,15 +12,15 @@ py_files = [
 ]
 # - Source files - #
 add_files = [
-    ('../bebarball/src/font/*.ttf','src/fonts'),
+    ('../bebarball/src/font/*.ttf','src/font'),
     ('../bebarball/src/sound/*.wav','src/sound'),
     ('../bebarball/src/sound/*.ogg','src/sound')
 ]
 
-a = Analysis(py_files, ####
-             pathex=['/home/penggao/Projects/MyProject/MyGame/Pygame-Bebarball/bebarball'], ####
-             binaries=None,
-             datas=add_files, ####
+a = Analysis(py_files,
+             pathex=['.'],
+             binaries=[],
+             datas=add_files,
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -28,26 +28,24 @@ a = Analysis(py_files, ####
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
-             noarchive=False
-             )
+             noarchive=False)
 pyz = PYZ(a.pure, a.zipped_data,
-             cipher=block_cipher
-          )
+             cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          a.binaries,
-          a.zipfiles,
-          a.datas,
           [],
           exclude_binaries=True,
-          name='Bebarball', ###
+          name='BeBarBall',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          upx_exclude=[],
-          runtime_tmpdir=None,
-          console=False, ###
-          icon=''
-          )
-
+          console=True )
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               upx_exclude=[],
+               name='BeBarBall')
