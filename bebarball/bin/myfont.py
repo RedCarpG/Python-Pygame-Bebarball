@@ -4,9 +4,9 @@ from pygame import error
 from pygame.compat import geterror
 
 from bin.GLOBAL import *
+from bin.frozen_dir import main_dir
 
-main_dir = os.path.split(os.path.abspath(__file__))[0]
-font_dir = os.path.join(main_dir, '../src/font')
+font_dir = os.path.join(main_dir, 'src\\font')
 
 
 def load_font(name, size):
