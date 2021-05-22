@@ -3,45 +3,51 @@ import traceback
 import pygame
 import sys
 from pygame.locals import *
+from enum import Enum
 
-if not pygame.font: print('Warning, fonts disabled')
-if not pygame.mixer: print('Warning, sound disabled')
+if not pygame.font:
+    print('Warning, fonts disabled')
+if not pygame.mixer:
+    print('Warning, sound disabled')
 
 from bin.bbb_sound import load_sound, load_music
 from bin.bbb_myfont import load_font, MyFont
-from bin.bbb_items import Ball, Bar
-from bin.GLOBAL import *
-
-# 初始化pygame Init Pygame
+from bin.bbb_items import Ball, Bar, BeBarBallSprite
+from bin.bbb_local import *
+import bin.bbb_local
+from bin.bbb_entrance import entrance
+# Init Pygame
 pygame.init()
 pygame.mixer.init()
 pygame.font.init()
-# 时钟 Clock
+# Clock
 clock = pygame.time.Clock()
-# 初始化窗口
+# Init screen
 screen = pygame.display.set_mode(SIZE)
 screen.fill(BLACK)
 pygame.display.set_caption("BeBarBall")
-pygame.mouse.set_visible(0)
-# 加载音乐 Load Music
+pygame.mouse.set_visible(False)
+# Load Music
 load_music("bg.ogg", MAIN_VOLUME)
 pygame.mixer.music.play()
 # Load Sound
 laugh_sound = load_sound("laugh.wav", MAIN_VOLUME)
 nope_sound = load_sound("nope.wav", MAIN_VOLUME * 2)
 soundGroup = [nope_sound, laugh_sound]
-# 字体 Load Font
-begin_font = load_font("arialbd.ttf", 30)
-title_font = load_font("arialbd.ttf", 150)
+# Load Font
 score_font = load_font("arial.ttf", 36)
 count_font = load_font("arialbd.ttf", 60)
 pause_font = load_font("arialbd.ttf", 70)
+FULL_SCREEN = False
+MUTE = False
 
-def full(a, fullscreen=True):
-    if fullscreen:
-        a = int(a[0] * PROPOTION[0]), int(a[1] * PROPOTION[1])
+
+def full_cal(a):
+    global FULL_SCREEN
+    if FULL_SCREEN:
+        a = int(a[0] * SCALE[0]), int(a[1] * SCALE[1])
     else:
-        a = int(a[0] / PROPOTION[0]), int(a[1] / PROPOTION[1])
+        a = int(a[0] / SCALE[0]), int(a[1] / SCALE[1])
     return a
 
 
@@ -51,86 +57,15 @@ def main():
     width = screen.get_rect().width
     height = screen.get_rect().height
 
-    running = True
-    restart = False
-    pause = False
-    mute = False
-    begin = True
-    fullscreen = False
+    enum_state = Enum('State', ('Normal', 'Pause', 'Restart'))
+    state = enum_state.Normal
 
-    # begin入场界面
-    screen.fill(BLACK)
-    begin_text = MyFont(screen, begin_font, "Press Any Key To Begin", (width // 2, 3 * height // 4), color=GRAY)
-    title_text = MyFont(screen, title_font, "BeBarBall", (width // 2, height // 2), color=WHITE)
-    begin_text.blit()
-    title_text.blit()
-    pygame.display.flip()
+    entrance(screen, clock)
 
-    # begin入场等待
-    while begin:
-        # 全部事件
-        for event in pygame.event.get():
-            # 退出事件
-            if event.type == QUIT:
-                print("--退出")
-                running = False
-                begin = False
-            # 按键事件
-            elif event.type == KEYDOWN:
-                # 按ESCAPE退出
-                if event.key == K_ESCAPE:
-                    print("--退出")
-                    running = False
-                    begin = False
-                elif event.key == K_F11:
-                    if fullscreen:
-                        print("--退出全屏")
-                        fullscreen = False
-                        screen = pygame.display.set_mode(SIZE)
-                        width = screen.get_rect().width
-                        height = screen.get_rect().height
-                        Ball.init_speed = full(Ball.init_speed, 0)
-                        Ball.max_speed = full(Ball.max_speed, 0)
-                        Ball.speed_increase = int(Ball.speed_increase / PROPOTION[0])
-                        Ball.rad = int(Ball.rad / PROPOTION[1])
-                        Bar.width, Bar.height = full((Bar.width, Bar.height), 0)
-                        Bar.max_speed = full(Bar.max_speed, 0)
-                        screen.fill(BLACK)
-                        begin_text.move_center(full(begin_text.rect.center))
-                        title_text.move_center(full(title_text.rect.center))
-                        begin_text.blit()
-                        title_text.blit()
-                    # 非全屏变全屏
-                    else:
-                        print("--进入全屏")
-                        fullscreen = True
-                        screen = pygame.display.set_mode(FULL_SIZE, FULLSCREEN | HWSURFACE)
-                        width = screen.get_rect().width
-                        height = screen.get_rect().height
-                        Ball.init_speed = full(Ball.init_speed)
-                        Ball.max_speed = full(Ball.max_speed)
-                        Ball.speed_increase = int(Ball.speed_increase * PROPOTION[0])
-                        Ball.rad = int(Ball.rad * PROPOTION[1])
-                        Bar.width, Bar.height = full((Bar.width, Bar.height))
-                        Bar.max_speed = full(Bar.max_speed)
-                        screen.fill(BLACK)
-                        begin_text.move_center(full(begin_text.rect.center))
-                        title_text.move_center(full(title_text.rect.center))
-                        begin_text.blit()
-                        title_text.blit()
-                else:
-                    begin = False
-                    # 帧数设置
-        clock.tick(10)
-
-        # 位置
-    cen_bar1 = width // 10, height // 2
-    cen_bar2 = 9 * width // 10, height // 2
-    center_ball = width // 2, height // 2
     # 对象
-    bar1 = Bar(screen, cen_bar1)
-    bar2 = Bar(screen, cen_bar2)
-    ball1 = Ball(screen, center_ball)
+    bar1 = Bar(screen)
+    bar2 = Bar(screen)
+    ball1 = Ball(screen)
     # 全部对象加入ALL_Sprites
     ALL_Sprites = pygame.sprite.Group()
     ALL_Sprites.add(bar1)
@@ -154,36 +89,23 @@ def main():
     score1_text.move_center((w2, h1))
     score2_text.move_center((3 * w2, h1))
     number_text.move_center((w1, 2 * height // 5))
-    # 主循环                
-    while running:
-        # 全部事件
-        for event in pygame.event.get():
+    # 主循环
+    flag_exit = False
+    while not flag_exit:
+        """ Get events """
+        events = pygame.event.get()
+        # Global event
+        for event in events:
             # 退出事件
             if event.type == QUIT:
                 print("--退出")
-                running = False
+                flag_exit = True
             # 按键事件
             elif event.type == KEYDOWN:
                 # 按ESCAPE退出
                 if event.key == K_ESCAPE:
                     print("--退出")
-                    running = False
-                # 方向键（w,s），（up,down）控制bar
-                elif event.key == K_w:
-                    # flag = 1 上移
-                    bar1.move_flag = 1
-                elif event.key == K_s:
-                    # flag = -1 下移
-                    bar1.move_flag = -1
-                elif event.key == K_UP:
-                    bar2.move_flag = 1
-                elif event.key == K_DOWN:
-                    bar2.move_flag = -1
-
-                elif event.key == K_SPACE:
-                    print("--暂停")
-                    pause = True
-
+                    flag_exit = True
                 elif event.key == K_MINUS:
                     if volume > - MAIN_VOLUME:
                         print("--音量降低：", volume + MAIN_VOLUME)
@@ -200,111 +122,87 @@ def main():
                             each.set_volume(MAIN_VOLUME + volume)
 
                 elif event.key == K_F11:
-                    # 全屏变非全屏
-                    if fullscreen:
-                        print("--退出全屏")
-                        fullscreen = False
-                        screen = pygame.display.set_mode(SIZE)
-                        width = screen.get_rect().width
-                        height = screen.get_rect().height
-                        cen_bar1 = width // 10, height // 2
-                        cen_bar2 = 9 * width // 10, height // 2
-                        center_ball = width // 2, height // 2
-                        Ball.init_speed = full(Ball.init_speed, 0)
-                        Ball.max_speed = full(Ball.max_speed, 0)
-                        Ball.speed_increase = int(Ball.speed_increase / PROPOTION[0])
-                        Ball.rad = int(Ball.rad / PROPOTION[1])
-                        Bar.width, Bar.height = full((Bar.width, Bar.height), 0)
-                        Bar.max_speed = full(Bar.max_speed, 0)
-                        bar1 = Bar(screen, cen_bar1)
-                        bar2 = Bar(screen, cen_bar2)
-                        ball1 = Ball(screen, center_ball)
-                        ALL_Sprites.empty()
-                        ALL_Sprites.add(ball1)
-                        ALL_Sprites.add(bar1)
-                        ALL_Sprites.add(bar2)
-                        pause_text.move_center(full(pause_text.rect.center, 0))
-                        restart_text.move_center(full(restart_text.rect.center, 0))
-                        score1_text.move_center(full(score1_text.rect.center, 0))
-                        score2_text.move_center(full(score2_text.rect.center, 0))
-                        number_text.move_center(full(number_text.rect.center, 0))
-
-                        restart = True
-                    # 非全屏变全屏
-                    else:
+                    global FULL_SCREEN
+                    FULL_SCREEN = not FULL_SCREEN
+                    # Make full screen
+                    if FULL_SCREEN:
                         print("--进入全屏")
-                        fullscreen = True
                         screen = pygame.display.set_mode(FULL_SIZE, FULLSCREEN | HWSURFACE)
-                        width = screen.get_rect().width
-                        height = screen.get_rect().height
-                        cen_bar1 = width // 10, height // 2
-                        cen_bar2 = 9 * width // 10, height // 2
-                        center_ball = width // 2, height // 2
-                        Ball.init_speed = full(Ball.init_speed)
-                        Ball.max_speed = full(Ball.max_speed)
-                        Ball.speed_increase = int(Ball.speed_increase * PROPOTION[0])
-                        Ball.rad = int(Ball.rad * PROPOTION[1])
-                        Bar.width, Bar.height = full((Bar.width, Bar.height))
-                        Bar.max_speed = full(Bar.max_speed)
-                        bar1 = Bar(screen, cen_bar1)
-                        bar2 = Bar(screen, cen_bar2)
-                        ball1 = Ball(screen, center_ball)
-                        ALL_Sprites.empty()
-                        ALL_Sprites.add(ball1)
-                        ALL_Sprites.add(bar1)
-                        ALL_Sprites.add(bar2)
-                        pause_text.move_center(full(pause_text.rect.center))
-                        restart_text.move_center(full(restart_text.rect.center))
-                        score1_text.move_center(full(score1_text.rect.center))
-                        score2_text.move_center(full(score2_text.rect.center))
-                        number_text.move_center(full(number_text.rect.center))
+                    # Exit Full screen
+                    else:
+                        print("--退出全屏")
+                        screen = pygame.display.set_mode(SIZE)
+                    width = screen.get_rect().width
+                    height = screen.get_rect().height
+                    print(FULL_SCREEN)
+                    for each in ALL_Sprites:
+                        each.to_full_screen(full_cal, FULL_SCREEN)
 
-                        restart = True
+                    pause_text.move_center(full_cal(pause_text.rect.center))
+                    restart_text.move_center(full_cal(restart_text.rect.center))
+                    score1_text.move_center(full_cal(score1_text.rect.center))
+                    score2_text.move_center(full_cal(score2_text.rect.center))
+                    number_text.move_center(full_cal(number_text.rect.center))
 
-            # 松开按键事件，flag = 0
-            elif event.type == KEYUP:
-                if event.key == K_w and bar1.move_flag == 1:
-                    bar1.move_flag = 0
 
-                if event.key == K_s and bar1.move_flag == -1:
-                    bar1.move_flag = 0
+        """ Normal states"""
+        if state == enum_state.Normal:
+            for event in events:
+                # 按键事件
+                if event.type == KEYDOWN:
+                    # 方向键（w,s），（up,down）控制bar
+                    if event.key == K_w:
+                        bar1.move_flag = 1
+                    elif event.key == K_s:
+                        bar1.move_flag = -1
+                    elif event.key == K_UP:
+                        bar2.move_flag = 1
+                    elif event.key == K_DOWN:
+                        bar2.move_flag = -1
+    
+                    elif event.key == K_SPACE:
+                        print("-- Pause")
+                        state = enum_state.Pause
+                # 松开按键事件，flag = 0
+                elif event.type == KEYUP:
+                    if event.key == K_w and bar1.move_flag == 1:
+                        bar1.move_flag = 0
+                    if event.key == K_s and bar1.move_flag == -1:
+                        bar1.move_flag = 0
+                    if event.key == K_UP and bar2.move_flag == 1:
+                        bar2.move_flag = 0
+                    if event.key == K_DOWN and bar2.move_flag == -1:
+                        bar2.move_flag = 0
+            # 检测碰撞
+            for each in ALL_Sprites:
+                if each == ball1:
+                    continue
+                if ball1.hit(each):
+                    if not each.hit_flag:
+                        each.hit(ball1)
+                        nope_sound.play()
+                    each.hit_flag = True
+                else:
+                    each.hit_flag = False
 
-                if event.key == K_UP and bar2.move_flag == 1:
-                    bar2.move_flag = 0
+            # ball到达左右边界则相应加分，进入结算画面
+            if ball1.rect.left < 0 or ball1.rect.right > width:
+                # 到达左边，p2加分
+                if ball1.rect.left < 0:
+                    print("--P2得分")
+                    score2 += 1
+                    score2_text.change_text("P2 : %s" % str(score2))
+                # 到达右边，p1加分
+                elif ball1.rect.right > width:
+                    print("--P1得分")
+                    score1 += 1
+                    score1_text.change_text("P1 : %s" % str(score1))
+                # 音乐淡出，播放音效
+                laugh_sound.play()
+                state = enum_state.Restart
 
-                if event.key == K_DOWN and bar2.move_flag == -1:
-                    bar2.move_flag = 0
-
-        # 检测碰撞
-        for each in ALL_Sprites:
-            if each == ball1:
-                continue
-            if ball1.hit(each):
-                if not each.hit_flag:
-                    each.hit(ball1)
-                    nope_sound.play()
-                each.hit_flag = True
-            else:
-                each.hit_flag = False
-
-        # ball到达左右边界则相应加分，进入结算画面
-        if ball1.rect.left < 0 or ball1.rect.right > width:
-            # 到达左边，p2加分
-            if ball1.rect.left < 0:
-                print("--P2得分")
-                score2 += 1
-                score2_text.change_text("P2 : %s" % str(score2))
-            # 到达右边，p1加分
-            elif ball1.rect.right > width:
-                print("--P1得分")
-                score1 += 1
-                score1_text.change_text("P1 : %s" % str(score1))
-            # 音乐淡出，播放音效
-            laugh_sound.play()
-            restart = True
-
-        # 重新开始
-        if restart:
+        """ Restart states"""
+        if state == enum_state.Restart:
             # 重置位置
             ball1.reset()
             bar1.reset()
@@ -330,30 +228,22 @@ def main():
                 # 重新播放音乐
             pygame.mixer.music.rewind()
             pygame.mixer.music.play()
-            restart = False
-        # 暂停
-        while pause:
+            state = enum_state.Normal
+
+        """ Pause states"""
+        if state == enum_state.Pause:
             pygame.mixer.music.pause()
-            for event in pygame.event.get():
-                # 退出事件
-                if event.type == QUIT:
-                    running = False
-                    pause = False
+
+            for event in events:
                 # 按键事件
-                elif event.type == KEYDOWN:
-                    # 按ESCAPE退出
-                    if event.key == K_ESCAPE:
-                        print("--退出游戏")
-                        running = False
-                        pause = False
-                    elif event.key == K_SPACE:
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
                         print("--解除暂停")
-                        pause = False
+                        state = enum_state.Normal
                         pygame.mixer.music.unpause()
                     elif event.key == K_RETURN:
                         print("--重置游戏")
-                        restart = True
-                        pause = False
+                        state = enum_state.Restart
                         score1 = 0
                         score2 = 0
                         score1_text.change_text("P1 : %s" % str(score1))

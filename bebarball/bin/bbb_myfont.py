@@ -3,7 +3,7 @@ import pygame.font as pyfont
 from pygame import error
 from pygame.compat import geterror
 
-from .GLOBAL import *
+from .bbb_local import *
 from .bbb_frozen_dir import main_dir
 
 font_dir = os.path.join(main_dir, 'src\\font')
