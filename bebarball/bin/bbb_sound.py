@@ -1,7 +1,7 @@
 import os
 from pygame import mixer, error
 # from pygame.compat import geterror
-from bin.frozen_dir import main_dir
+from .bbb_frozen_dir import main_dir
 
 sound_dir = os.path.join(main_dir, 'src\\sound')
 

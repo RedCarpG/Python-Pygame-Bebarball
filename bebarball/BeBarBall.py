@@ -7,9 +7,9 @@ from pygame.locals import *
 if not pygame.font: print('Warning, fonts disabled')
 if not pygame.mixer: print('Warning, sound disabled')
 
-from bin.sound import load_sound, load_music
-from bin.myfont import load_font, MyFont
-from bin.items import Ball, Bar
+from bin.bbb_sound import load_sound, load_music
+from bin.bbb_myfont import load_font, MyFont
+from bin.bbb_items import Ball, Bar
 from bin.GLOBAL import *
 
 # 初始化pygame Init Pygame
@@ -26,7 +26,7 @@ pygame.mouse.set_visible(0)
 # 加载音乐 Load Music
 load_music("bg.ogg", MAIN_VOLUME)
 pygame.mixer.music.play()
-# 加载音效 Load Sound
+# Load Sound
 laugh_sound = load_sound("laugh.wav", MAIN_VOLUME)
 nope_sound = load_sound("nope.wav", MAIN_VOLUME * 2)
 soundGroup = [nope_sound, laugh_sound]
@@ -36,6 +36,13 @@ title_font = load_font("arialbd.ttf", 150)
 score_font = load_font("arial.ttf", 36)
 count_font = load_font("arialbd.ttf", 60)
 pause_font = load_font("arialbd.ttf", 70)
+
+def full(a, fullscreen=True):
+    if fullscreen:
+        a = int(a[0] * PROPOTION[0]), int(a[1] * PROPOTION[1])
+    else:
+        a = int(a[0] / PROPOTION[0]), int(a[1] / PROPOTION[1])
+    return a
 
 
 def main():
@@ -386,11 +393,3 @@ if __name__ == '__main__':
         traceback.print_exc()
         pygame.quit()
         input()
-
-
-def full(a, fullscreen=True):
-    if fullscreen:
-        a = int(a[0] * PROPOTION[0]), int(a[1] * PROPOTION[1])
-    else:
-        a = int(a[0] / PROPOTION[0]), int(a[1] / PROPOTION[1])
-    return a

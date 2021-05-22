@@ -2,7 +2,7 @@ from pygame.sprite import Sprite
 from pygame import Rect
 from pygame.draw import rect, circle
 import random
-from bin.GLOBAL import *
+from .GLOBAL import *
 
 
 class Bar(Sprite):
