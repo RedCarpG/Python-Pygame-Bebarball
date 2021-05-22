@@ -33,7 +33,8 @@ def load_font(name, size):
 
 
 class MyFont:
-    def __init__(self, screen, font, text='', center_position=(10, 10), anti_alias=True, color=WHITE, background=None):
+    def __init__(self, screen, font, text='', center_position=(10, 10),
+                 anti_alias=True, color=WHITE, background=None, visible=True):
         self.font = font
         self.anti_alias = anti_alias
         self.color = color
@@ -43,9 +44,11 @@ class MyFont:
         self.screen = screen
         self.rect = self.render.get_rect()
         self.rect.center = center_position
+        self.visible = visible
 
     def blit(self):
-        self.screen.blit(self.render, (self.rect[0], self.rect[1]))
+        if self.visible:
+            self.screen.blit(self.render, (self.rect[0], self.rect[1]))
 
     def move_center(self, center_position):
         self.rect.center = center_position
@@ -67,3 +70,6 @@ class MyFont:
 
     def change_render(self):
         self.render = self.font.render(self.text, self.anti_alias, self.color, self.background)
+
+    def set_visible(self, visible=True):
+        self.visible = visible
