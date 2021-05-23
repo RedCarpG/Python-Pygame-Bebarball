@@ -9,7 +9,8 @@ py_files = [
     '../bebarball/bin/bbb_items.py',
     '../bebarball/bin/bbb_myfont.py',
     '../bebarball/bin/bbb_sound.py',
-    '../bebarball/bin/bbb_frozen_dir.py'
+    '../bebarball/bin/bbb_frozen_dir.py',
+    '../bebarball/bin/__init__.py'
 ]
 # - Source files - #
 add_files = [

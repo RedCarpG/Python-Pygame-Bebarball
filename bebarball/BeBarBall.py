@@ -3,10 +3,7 @@ Main script
 @author RedCarpG
 """
 # ------------------------- Import ------------------------- 
-import traceback
-
 import pygame
-import os
 import sys
 from pygame.locals import *
 from enum import Enum
@@ -14,7 +11,7 @@ from random import randint
 
 from bin.bbb_sound import load_sound, load_music
 from bin.bbb_myfont import load_font, MyFont
-from bin.bbb_items import Ball, Bar, BeBarBallSprite
+from bin.bbb_items import Ball, Bar
 from bin.bbb_local import *
 
 if not pygame.font:
@@ -62,7 +59,7 @@ class BeBarBall(object):
         pygame.init()
         pygame.mixer.init()
         pygame.font.init()
-        pygame.display.set_caption("MyShrew")
+        pygame.display.set_caption("BeBarBall")
         pygame.mouse.set_visible(False)
 
         # Load Icon
@@ -100,7 +97,7 @@ class BeBarBall(object):
     
         start_text = MyFont(self.SCREEN, start_font, "Press Any Key To Start",
                             (self.WIDTH // 2, 3 * self.HEIGHT // 4), color=GRAY)
-        title_text = MyFont(self.SCREEN, title_font, "My Shrew", (self.WIDTH // 2, self.HEIGHT // 2), color=WHITE)
+        title_text = MyFont(self.SCREEN, title_font, "BeBarBall", (self.WIDTH // 2, self.HEIGHT // 2), color=WHITE)
     
         self.text_group.append(start_text)
         self.text_group.append(title_text)
@@ -118,12 +115,14 @@ class BeBarBall(object):
                 if event.type == QUIT:
                     print("-- Exit Game")
                     exit_game()
+                    return False
                 # Button press event
                 elif event.type == KEYDOWN:
                     # 按ESCAPE退出
                     if event.key == K_ESCAPE:
                         print("-- Exit Game")
                         exit_game()
+                        return False
                     elif event.key == K_F11:
                         pygame.display.toggle_fullscreen()
                         start_text.blit()
@@ -135,6 +134,7 @@ class BeBarBall(object):
             self.CLOCK.tick(100)
         self.text_group.remove(start_text)
         self.text_group.remove(title_text)
+        return True
 
     def run_game(self):
         """
@@ -230,13 +230,17 @@ class BeBarBall(object):
                 # --- Exit Event
                 if event.type == QUIT:
                     print("-- Exit")
-                    flag_exit = True
+                    # flag_exit = True
+                    exit_game()
+                    return 0
                 # =--- Button press Events
                 elif event.type == KEYDOWN:
                     # ‘Escape’ Button
                     if event.key == K_ESCAPE:
                         print("-- Exit")
-                        flag_exit = True
+                        # flag_exit = True
+                        exit_game()
+                        return 0
                     # ‘-’ Button
                     elif event.key == K_MINUS:
                         if self.VOLUME > - MAIN_VOLUME:
@@ -384,14 +388,14 @@ class BeBarBall(object):
 def main():
     # Game
     game = BeBarBall()
-    game.run_entrance()
-    game.run_game()
+    if game.run_entrance():
+        game.run_game()
     # Exit
     exit_game()
 
 
 if __name__ == '__main__':
-
+    """
     try:
         main()
     except SystemExit:
@@ -400,3 +404,5 @@ if __name__ == '__main__':
         traceback.print_exc()
         pygame.quit()
         input()
+    """
+    main()

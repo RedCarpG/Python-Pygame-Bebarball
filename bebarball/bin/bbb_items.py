@@ -1,11 +1,9 @@
-from enum import Enum
-
+from .bbb_local import *
 from pygame.sprite import Sprite
 from pygame import Rect
 from pygame.draw import rect, circle
 import random
 from abc import abstractmethod
-from .bbb_local import *
 
 
 class BeBarBallSprite(Sprite):
