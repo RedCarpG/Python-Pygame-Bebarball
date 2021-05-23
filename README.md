@@ -1,5 +1,8 @@
 # **Bebarball** 🎱
-@author RedCarpG 📝
+
+- Language: Python
+
+- Module: Pygame
 
 ## - Control: 
   
@@ -30,3 +33,5 @@
 2. Create executable:
     
     > see in _**build**_ folder
+
+@author RedCarpG 📝
