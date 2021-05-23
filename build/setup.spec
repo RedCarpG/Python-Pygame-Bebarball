@@ -16,6 +16,7 @@ add_files = [
     ('../bebarball/src/font/*.ttf','src/font'),
     ('../bebarball/src/sound/*.wav','src/sound'),
     ('../bebarball/src/sound/*.ogg','src/sound'),
+    ('../bebarball/src/sound/*.mp3','src/sound'),
     ('../bebarball/src/bebarball.ico','src')
 ]
 

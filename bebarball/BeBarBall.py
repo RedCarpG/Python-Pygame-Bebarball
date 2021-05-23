@@ -10,6 +10,7 @@ import os
 import sys
 from pygame.locals import *
 from enum import Enum
+from random import randint
 
 from bin.bbb_sound import load_sound, load_music
 from bin.bbb_myfont import load_font, MyFont
@@ -71,14 +72,19 @@ class BeBarBall(object):
         load_music("bg.ogg", MAIN_VOLUME)
         pygame.mixer.music.play()
         # Load Sound
-        self.laugh_sound = load_sound("laugh.wav", MAIN_VOLUME)
-        self.nope_sound = load_sound("nope.wav", MAIN_VOLUME * 2)
-        self.sound_group = [self.nope_sound, self.laugh_sound]
+        self.lose_sound1 = load_sound("lose1.wav", MAIN_VOLUME)
+        self.lose_sound2 = load_sound("lose2.wav", MAIN_VOLUME)
+        self.lose_sound3 = load_sound("lose3.wav", MAIN_VOLUME)
+        self.nope_sound1 = load_sound("nope1.wav", MAIN_VOLUME * 5)
+        self.nope_sound2 = load_sound("nope2.mp3", MAIN_VOLUME)
         # Load Font
         self.score_font = load_font("arial.ttf", 36)
         self.count_font = load_font("arialbd.ttf", 60)
         self.pause_font = load_font("arialbd.ttf", 70)
-        
+        # Groups
+        self.nope_sound_group = [self.nope_sound1, self.nope_sound2]
+        self.lose_sound_group = [self.lose_sound1, self.lose_sound2, self.lose_sound3]
+        self.sound_group = [self.nope_sound1, self.nope_sound2, self.lose_sound1, self.lose_sound2, self.lose_sound3]
         self.sprite_group = pygame.sprite.Group()
         self.text_group = list()
         
@@ -195,7 +201,7 @@ class BeBarBall(object):
         pause_text = MyFont(self.SCREEN, self.pause_font, "PAUSE", color=GRAY, visible=False)
         score1_text = MyFont(self.SCREEN, self.score_font, "P1 : %s" % str(score1), visible=False)
         score2_text = MyFont(self.SCREEN, self.score_font, "P2 : %s" % str(score2), visible=False)
-        number_text = MyFont(self.SCREEN, self.score_font, " ", visible=False)
+        number_text = MyFont(self.SCREEN, self.score_font, "", visible=False)
         restart_text = MyFont(self.SCREEN, self.count_font, "Restart", visible=False)
 
         w1 = self.WIDTH // 2
@@ -223,18 +229,18 @@ class BeBarBall(object):
             for event in events:
                 # --- Exit Event
                 if event.type == QUIT:
-                    print("--退出")
-                    exit_game()
+                    print("-- Exit")
+                    flag_exit = True
                 # =--- Button press Events
                 elif event.type == KEYDOWN:
                     # ‘Escape’ Button
                     if event.key == K_ESCAPE:
-                        print("--退出")
-                        exit_game()
+                        print("-- Exit")
+                        flag_exit = True
                     # ‘-’ Button
                     elif event.key == K_MINUS:
                         if self.VOLUME > - MAIN_VOLUME:
-                            print("--音量降低：", self.VOLUME + MAIN_VOLUME)
+                            print("-- Volume down：", self.VOLUME + MAIN_VOLUME)
                             self.VOLUME -= 0.1
                             pygame.mixer.music.set_volume(MAIN_VOLUME + self.VOLUME)
                             for each_sprite in self.sound_group:
@@ -242,7 +248,7 @@ class BeBarBall(object):
                     # ‘=’ Button
                     elif event.key == K_EQUALS:
                         if self.VOLUME < MAIN_VOLUME:
-                            print("--音量增加：", self.VOLUME + MAIN_VOLUME)
+                            print("-- Volume up：", self.VOLUME + MAIN_VOLUME)
                             self.VOLUME += 0.1
                             pygame.mixer.music.set_volume(MAIN_VOLUME + self.VOLUME)
                             for each_sprite in self.sound_group:
@@ -307,7 +313,7 @@ class BeBarBall(object):
                     if ball1.hit(each_sprite):
                         if not each_sprite.hit_flag:
                             each_sprite.hit(ball1)
-                            self.nope_sound.play()
+                            self.nope_sound_group[randint(0, len(self.nope_sound_group)-1)].play()
                         each_sprite.hit_flag = True
                     else:
                         each_sprite.hit_flag = False
@@ -315,16 +321,16 @@ class BeBarBall(object):
                 if ball1.rect.left < 0 or ball1.rect.right > self.WIDTH:
                     # Ball reaches Left, p2 score
                     if ball1.rect.left < 0:
-                        print("--P2得分")
+                        print("-- P2 Score")
                         score2 += 1
                         score2_text.change_text("P2 : %s" % str(score2))
                     # Ball reaches Right, p1 score
                     elif ball1.rect.right > self.WIDTH:
-                        print("--P1得分")
+                        print("-- P1 Score")
                         score1 += 1
                         score1_text.change_text("P1 : %s" % str(score1))
                     # Play sound
-                    self.laugh_sound.play()
+                    self.lose_sound_group[randint(0, len(self.lose_sound_group)-1)].play()
                     state = enter_state_restart()
                 # -------- Update items --------
                 self.sprite_group.update()
