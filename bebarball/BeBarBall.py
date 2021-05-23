@@ -3,13 +3,14 @@
 import traceback
 
 import pygame
+import os
 import sys
 from pygame.locals import *
 from enum import Enum
 
 from bin.bbb_sound import load_sound, load_music
 from bin.bbb_myfont import load_font, MyFont
-from bin.bbb_items import Ball, Bar, BeBarBallSprite
+from bin.bbb_items import Ball, Bar
 from bin.bbb_local import *
 
 if not pygame.font:
@@ -46,41 +47,15 @@ TEXT_GROUP = list()
 
 FULL_SCREEN = False
 MUTE = False
-ENUM_STATE = Enum('State', ('Normal', 'Pause', 'Restart'))
+ENUM_STATE = Enum('State', ('Entrance', 'Normal', 'Pause', 'Restart'))
 
 
-def full_cal(a):
-    global FULL_SCREEN
-    if FULL_SCREEN:
-        a = round(a[0] * SCALE), round(a[1] * SCALE)
-    else:
-        a = round(a[0] / SCALE), round(a[1] / SCALE)
-    return a
-
-
-def full_screen():
-    global screen
-    global FULL_SCREEN
-    FULL_SCREEN = not FULL_SCREEN
-    # Make full screen
-    if FULL_SCREEN:
-        print("--进入全屏")
-        #pygame.display.toggle_fullscreen()
-        screen = pygame.display.set_mode(FULL_SIZE, FULLSCREEN | HWSURFACE)
-    # Exit Full screen
-    else:
-        print("--退出全屏")
-        #pygame.display.toggle_fullscreen()
-        screen = pygame.display.set_mode(SIZE)
-
-    for each in SPITES_GROUP:
-        each.to_full_screen(full_cal, FULL_SCREEN)
-
-    for each_text in TEXT_GROUP:
-        each_text.move_center(full_cal(each_text.rect.center))
-        each_text.blit()
-
-    BeBarBallSprite.set_full_screen_mode(FULL_SCREEN)
+def exit_game():
+    # 退出
+    pygame.mixer.quit()
+    pygame.font.quit()
+    pygame.quit()
+    sys.exit()
 
 
 def entrance():
@@ -113,17 +88,17 @@ def entrance():
             # 退出事件
             if event.type == QUIT:
                 print("-- Exit")
-                running = False
-                wait_flag = False
+                exit_game()
             # 按键事件
             elif event.type == KEYDOWN:
                 # 按ESCAPE退出
                 if event.key == K_ESCAPE:
                     print("--退出")
-                    running = False
-                    wait_flag = False
+                    exit_game()
                 elif event.key == K_F11:
-                    full_screen()
+                    pygame.display.toggle_fullscreen()
+                    start_text.blit()
+                    title_text.blit()
                     pygame.display.flip()
                 else:
                     wait_flag = False
@@ -133,6 +108,7 @@ def entrance():
         # 帧数设置
     TEXT_GROUP.remove(start_text)
     TEXT_GROUP.remove(title_text)
+    return 1
 
 
 def enter_state_normal():
@@ -172,14 +148,13 @@ def main():
     global screen
     volume = 0
 
+    state = ENUM_STATE.Normal
     """ Entrance Screen """
     entrance()
-
     """ Main Screen """
     width = screen.get_rect().width
     height = screen.get_rect().height
 
-    state = ENUM_STATE.Normal
 
     # 对象
     bar1 = Bar(screen)
@@ -224,13 +199,13 @@ def main():
             # 退出事件
             if event.type == QUIT:
                 print("--退出")
-                flag_exit = True
+                exit_game()
             # 按键事件
             elif event.type == KEYDOWN:
                 # 按ESCAPE退出
                 if event.key == K_ESCAPE:
                     print("--退出")
-                    flag_exit = True
+                    exit_game()
                 elif event.key == K_MINUS:
                     if volume > - MAIN_VOLUME:
                         print("--音量降低：", volume + MAIN_VOLUME)
@@ -247,10 +222,7 @@ def main():
                             each.set_volume(MAIN_VOLUME + volume)
 
                 elif event.key == K_F11:
-                    full_screen()
-
-                    width = screen.get_rect().width
-                    height = screen.get_rect().height
+                    pygame.display.toggle_fullscreen()
 
         """ Normal states"""
         if state == ENUM_STATE.Normal:
@@ -371,10 +343,7 @@ def main():
         clock.tick(100)
 
     # 退出
-    pygame.mixer.quit()
-    pygame.font.quit()
-    pygame.quit()
-    sys.exit()
+    exit_game()
 
 
 if __name__ == '__main__':

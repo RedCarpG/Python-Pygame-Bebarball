@@ -14,7 +14,7 @@ COLOR_BALL = WHITE
 
 # Screen Size
 
-SIZE = WIDTH, HEIGHT = (800, 450)
+SIZE = WIDTH, HEIGHT = (800, 600)
 
 scale1 = GetSystemMetrics(0) / WIDTH
 scale2 = GetSystemMetrics(1) / HEIGHT
@@ -22,7 +22,6 @@ scale2 = GetSystemMetrics(1) / HEIGHT
 SCALE = scale1 if scale1 < scale2 else scale2
 
 FULL_SIZE = FULL_W, FULL_H = (int(WIDTH*SCALE), int(HEIGHT*SCALE))
-#SCALE = (FULL_W / WIDTH, FULL_H / HEIGHT)
 
 BAR_WIDTH = 20
 BAR_HEIGHT = 130
