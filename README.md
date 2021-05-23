@@ -1,19 +1,19 @@
-# **Bebarball**
-@Author RedCarpG
+# **Bebarball** 🎱
+@author RedCarpG 📝
 
 ## - Control: 
   
-> **P1**: `W`, `S`, `A`, `D`
+> **P1**: `W`, `S`, `A`, `D` 🎮
 >
-> **P2**: `↑`, `↓`, `←`, `→`
+> **P2**: `↑`, `↓`, `←`, `→` 🎮
 >
-> **Pause**: `Space`
+> **Pause**: `Space` 🛑
 > 
-> **Restart**: `Enter`
+> **Restart**: `Enter` ⭐
 >
-> **Full Screen**: `F11`
+> **Full Screen**: `F11` 🌕
 >
-> **Exit**: `Escape`
+> **Exit**: `Escape` 🏃
 
 ## - Usage
 
