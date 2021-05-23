@@ -47,17 +47,6 @@ class Bar(BeBarBallSprite):
 
         if BeBarBallSprite.FULL_SCREEN_MODE:
             # Max speed
-            self.max_speed = BAR_MAX_SPEED
-            # size
-            self.width = BAR_WIDTH
-            self.height = BAR_HEIGHT
-            # 自身矩形与位置
-            if self.bar_num == 1:
-                self.init_center = BAR_INIT_POSITION_1
-            else:
-                self.init_center = BAR_INIT_POSITION_2
-        else:
-            # Max speed
             self.max_speed = BAR_MAX_SPEED_FS
             # size
             self.width = BAR_WIDTH_FS
@@ -67,9 +56,20 @@ class Bar(BeBarBallSprite):
                 self.init_center = BAR_INIT_POSITION_1_FS
             else:
                 self.init_center = BAR_INIT_POSITION_2_FS
+        else:
+            # Max speed
+            self.max_speed = BAR_MAX_SPEED
+            # size
+            self.width = BAR_WIDTH
+            self.height = BAR_HEIGHT
+            # 自身矩形与位置
+            if self.bar_num == 1:
+                self.init_center = BAR_INIT_POSITION_1
+            else:
+                self.init_center = BAR_INIT_POSITION_2
 
-        self.rect_center = self.init_center
-        self.rect = Rect(self.rect_center, (self.width, self.height))
+        self.rect = Rect((0, 0), (self.width, self.height))
+        self.rect.center = self.init_center
 
         # 当前速度
         self.direction = [1, 1]
@@ -155,8 +155,9 @@ class Bar(BeBarBallSprite):
             else:
                 self.init_center = BAR_INIT_POSITION_2
 
-        self.rect = Rect(self.rect.topleft, (self.width, self.height))
-        self.rect.center = func_full(self.rect.center)
+        center = self.rect.center
+        self.rect = Rect((0, 0), (self.width, self.height))
+        self.rect.center = func_full(center)
 
 
 class Ball(BeBarBallSprite):
@@ -168,14 +169,6 @@ class Ball(BeBarBallSprite):
         self.screen = screen
 
         if BeBarBallSprite.FULL_SCREEN_MODE:
-            self.init_speed = BALL_INIT_SPEED
-            # 最大ball速度
-            self.max_speed = BALL_MAX_SPEED
-            # ball每次x速度增长
-            self.speed_increase = BALL_INCREASE_SPEED
-            self.init_position = BALL_INIT_POSITION
-            self.rad = BALL_RAD
-        else:
             self.init_speed = BALL_INIT_SPEED_FS
             # 最大ball速度
             self.max_speed = BALL_MAX_SPEED_FS
@@ -183,6 +176,14 @@ class Ball(BeBarBallSprite):
             self.speed_increase = BALL_INCREASE_SPEED_FS
             self.init_position = BALL_INIT_POSITION_FS
             self.rad = BALL_RAD_FS
+        else:
+            self.init_speed = BALL_INIT_SPEED
+            # 最大ball速度
+            self.max_speed = BALL_MAX_SPEED
+            # ball每次x速度增长
+            self.speed_increase = BALL_INCREASE_SPEED
+            self.init_position = BALL_INIT_POSITION
+            self.rad = BALL_RAD
 
         # 当前方向
         self.direction = [random.choice((-1, 1)), random.choice((-1, 1))]
@@ -243,5 +244,6 @@ class Ball(BeBarBallSprite):
             self.init_position = BALL_INIT_POSITION
 
         self.speed = list(func_full(self.speed))
-        self.rect = Rect(self.rect.topleft, (self.rad, self.rad))
-        self.rect.center = func_full(self.rect.center)
+        center = self.rect.center
+        self.rect = Rect((0, 0), (self.rad, self.rad))
+        self.rect.center = func_full(center)

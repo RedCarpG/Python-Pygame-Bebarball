@@ -7,15 +7,15 @@ import sys
 from pygame.locals import *
 from enum import Enum
 
-if not pygame.font:
-    print('Warning, fonts disabled')
-if not pygame.mixer:
-    print('Warning, sound disabled')
-
 from bin.bbb_sound import load_sound, load_music
 from bin.bbb_myfont import load_font, MyFont
 from bin.bbb_items import Ball, Bar, BeBarBallSprite
 from bin.bbb_local import *
+
+if not pygame.font:
+    print('Warning, fonts disabled')
+if not pygame.mixer:
+    print('Warning, sound disabled')
 
 # ------------------------- Init ------------------------- 
 # Init Pygame
@@ -28,7 +28,6 @@ pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 # Init screen
 screen = pygame.display.set_mode(SIZE)
-screen.fill(BLACK)
 
 # Load Music
 load_music("bg.ogg", MAIN_VOLUME)
@@ -53,9 +52,9 @@ ENUM_STATE = Enum('State', ('Normal', 'Pause', 'Restart'))
 def full_cal(a):
     global FULL_SCREEN
     if FULL_SCREEN:
-        a = int(a[0] * SCALE[0]), int(a[1] * SCALE[1])
+        a = round(a[0] * SCALE), round(a[1] * SCALE)
     else:
-        a = int(a[0] / SCALE[0]), int(a[1] / SCALE[1])
+        a = round(a[0] / SCALE), round(a[1] / SCALE)
     return a
 
 
@@ -66,10 +65,12 @@ def full_screen():
     # Make full screen
     if FULL_SCREEN:
         print("--进入全屏")
+        #pygame.display.toggle_fullscreen()
         screen = pygame.display.set_mode(FULL_SIZE, FULLSCREEN | HWSURFACE)
     # Exit Full screen
     else:
         print("--退出全屏")
+        #pygame.display.toggle_fullscreen()
         screen = pygame.display.set_mode(SIZE)
 
     for each in SPITES_GROUP:
@@ -146,7 +147,7 @@ def enter_state_restart():
     for each in SPITES_GROUP:
         each.reset()
     for index, each in enumerate(TEXT_GROUP):
-        if index < 3:
+        if index < 2:
             each.set_visible(False)
         else:
             each.set_visible(True)
@@ -156,7 +157,7 @@ def enter_state_restart():
 def enter_state_pause():
     pygame.mixer.music.pause()
     for index, each in enumerate(TEXT_GROUP):
-        if index < 3:
+        if index < 2:
             each.set_visible(True)
         else:
             each.set_visible(False)
