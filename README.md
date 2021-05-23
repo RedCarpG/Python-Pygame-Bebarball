@@ -32,6 +32,6 @@
     
 2. Create executable:
     
-    > see in _**build**_ folder
+    > see in `build/` folder
 
 @author RedCarpG 📝
