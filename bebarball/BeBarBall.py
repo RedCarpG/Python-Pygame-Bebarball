@@ -63,7 +63,10 @@ class BeBarBall(object):
         pygame.font.init()
         pygame.display.set_caption("BeBarBall")
         pygame.mouse.set_visible(False)
-        
+
+        # Load Icon
+        icon = pygame.image.load("src/Bebarball.ico")
+        pygame.display.set_icon(icon)
         # Load Music
         load_music("bg.ogg", MAIN_VOLUME)
         pygame.mixer.music.play()
@@ -107,13 +110,13 @@ class BeBarBall(object):
             for event in pygame.event.get():
                 # Exit
                 if event.type == QUIT:
-                    print("-- Exit")
+                    print("-- Exit Game")
                     exit_game()
                 # Button press event
                 elif event.type == KEYDOWN:
                     # 按ESCAPE退出
                     if event.key == K_ESCAPE:
-                        print("--退出")
+                        print("-- Exit Game")
                         exit_game()
                     elif event.key == K_F11:
                         pygame.display.toggle_fullscreen()
