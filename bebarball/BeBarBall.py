@@ -1,4 +1,7 @@
-""" """
+"""
+Main script
+@author RedCarpG
+"""
 # ------------------------- Import ------------------------- 
 import traceback
 
@@ -22,7 +25,11 @@ if not pygame.mixer:
 
 
 def exit_game():
-    # 退出
+    """
+    System Exit
+    @return: None
+    """
+    # Exit
     pygame.mixer.quit()
     pygame.font.quit()
     pygame.quit()
@@ -30,19 +37,26 @@ def exit_game():
 
 
 class BeBarBall(object):
-
+    """
+    Class for main game procedure
+    """
     # Clock
     CLOCK = pygame.time.Clock()
     # Init SCREEN
     SCREEN = pygame.display.set_mode(SIZE)
-    # wait_flag入场界面
     WIDTH = SCREEN.get_rect().width
     HEIGHT = SCREEN.get_rect().height
-    
+    # Volume
     VOLUME = 0
     MUTE = False
 
+    COUNT_EVENT = pygame.USEREVENT + 1
+    COUNTS = 3
+
     def __init__(self):
+        """
+        Init pygame & load resources
+        """
         # Init Pygame
         pygame.init()
         pygame.mixer.init()
@@ -66,6 +80,10 @@ class BeBarBall(object):
         self.text_group = list()
         
     def run_entrance(self):
+        """
+        Entrance procedure
+        @return: None
+        """
         self.SCREEN.fill(COLOR_WAIT_SCREEN)
     
         wait_flag_font = load_font("arialbd.ttf", 30)
@@ -81,17 +99,17 @@ class BeBarBall(object):
         start_text.blit()
         title_text.blit()
         pygame.display.flip()
-    
+
+        ''' Waiting for trigger '''
         wait_flag = True
-        # wait for signal
         while wait_flag:
-            # 全部事件
+            ''' Trigger events '''
             for event in pygame.event.get():
-                # 退出事件
+                # Exit
                 if event.type == QUIT:
                     print("-- Exit")
                     exit_game()
-                # 按键事件
+                # Button press event
                 elif event.type == KEYDOWN:
                     # 按ESCAPE退出
                     if event.key == K_ESCAPE:
@@ -104,52 +122,70 @@ class BeBarBall(object):
                         pygame.display.flip()
                     else:
                         wait_flag = False
-    
+            # Frame rate
             self.CLOCK.tick(100)
-            # 帧数设置
         self.text_group.remove(start_text)
         self.text_group.remove(title_text)
-    
-    def run_game(self):
-        enum_states = Enum('State', ('Entrance', 'Normal', 'Pause', 'Restart'))
 
+    def run_game(self):
+        """
+        Main game
+        @return: None
+        """
+        class EnumStates(Enum):
+            Entrance = 0
+            Normal = 1
+            Pause = 2
+            Restart = 3
+        state = EnumStates.Normal
+
+        # Enter function for Normal state
         def enter_state_normal():
             for each in self.text_group:
                 each.set_visible(False)
-            return enum_states.Normal
+            return EnumStates.Normal
 
+        # Enter function for Restart state
         def enter_state_restart():
-            # 音乐淡出
+            BeBarBall.COUNTS = 3
+            number_text.change_text(str(BeBarBall.COUNTS))
+            # Count Event
+            pygame.time.set_timer(self.COUNT_EVENT, 1000)
+            # Music fade
             pygame.mixer.music.fadeout(1000)
+            # Reset objects
             for each in self.sprite_group:
                 each.reset()
+            # Blit restart text
             for index, each_text in enumerate(self.text_group):
-                if index < 2:
+                if index < 1:
                     each_text.set_visible(False)
                 else:
                     each_text.set_visible(True)
-            return enum_states.Restart
+            return EnumStates.Restart
 
+        # Enter function for Pause state
         def enter_state_pause():
+            # Pause music
             pygame.mixer.music.pause()
+            # Blit pause text
             for index, each in enumerate(self.text_group):
-                if index < 2:
+                if index < 1:
                     each.set_visible(True)
                 else:
                     each.set_visible(False)
                 each.blit()
             pygame.display.flip()
-            return enum_states.Pause
+            return EnumStates.Pause
 
-        state = enum_states.Normal
-
-        # Object
+        # Objects
         bar1 = Bar(self.SCREEN)
         bar2 = Bar(self.SCREEN)
         ball1 = Ball(self.SCREEN)
         self.sprite_group.add(bar1)
         self.sprite_group.add(bar2)
         self.sprite_group.add(ball1)
+
         # Text
         score1 = 0
         score2 = 0
@@ -174,25 +210,25 @@ class BeBarBall(object):
         self.text_group.append(score1_text)
         self.text_group.append(score2_text)
         self.text_group.append(number_text)
-        
-        self.VOLUME = 0
-        # 主循环
+
+        # Main loop
         flag_exit = False
         while not flag_exit:
-            """ Get events """
+            """ Events """
+            # ---------------- Global event ----------------
             events = pygame.event.get()
-            # Global event
             for event in events:
-                # 退出事件
+                # --- Exit Event
                 if event.type == QUIT:
                     print("--退出")
                     exit_game()
-                # 按键事件
+                # =--- Button press Events
                 elif event.type == KEYDOWN:
-                    # 按ESCAPE退出
+                    # ‘Escape’ Button
                     if event.key == K_ESCAPE:
                         print("--退出")
                         exit_game()
+                    # ‘-’ Button
                     elif event.key == K_MINUS:
                         if self.VOLUME > - MAIN_VOLUME:
                             print("--音量降低：", self.VOLUME + MAIN_VOLUME)
@@ -200,6 +236,7 @@ class BeBarBall(object):
                             pygame.mixer.music.set_volume(MAIN_VOLUME + self.VOLUME)
                             for each_sprite in self.sound_group:
                                 each_sprite.set_volume(MAIN_VOLUME + self.VOLUME)
+                    # ‘=’ Button
                     elif event.key == K_EQUALS:
                         if self.VOLUME < MAIN_VOLUME:
                             print("--音量增加：", self.VOLUME + MAIN_VOLUME)
@@ -207,50 +244,63 @@ class BeBarBall(object):
                             pygame.mixer.music.set_volume(MAIN_VOLUME + self.VOLUME)
                             for each_sprite in self.sound_group:
                                 each_sprite.set_volume(MAIN_VOLUME + self.VOLUME)
-
+                    # 'F11' Button
                     elif event.key == K_F11:
                         pygame.display.toggle_fullscreen()
-
-            """ Normal states"""
-            if state == enum_states.Normal:
-                # Player button event
+            """ States """
+            # ---------------- Normal states ----------------
+            if state == EnumStates.Normal:
+                # -------- Player button event --------
                 for event in events:
-                    # 按键事件
+                    # --- Button press Events
                     if event.type == KEYDOWN:
-                        # 方向键（w,s），（up,down）控制bar
+                        # """ Direction buttons (w,s) & (up,down) to move <Bar>s """
+                        # 'w' Button
                         if event.key == K_w:
                             bar1.move_flag = 1
+                        # 's' Button
                         elif event.key == K_s:
                             bar1.move_flag = -1
+                        # 'up' Button
                         elif event.key == K_UP:
                             bar2.move_flag = 1
+                        # 'down' Button
                         elif event.key == K_DOWN:
                             bar2.move_flag = -1
-
+                        # """ (space) button to pause game """
+                        # 'space' Button
                         elif event.key == K_SPACE:
-                            print("-- Pause")
+                            print("-- Pause Game")
                             state = enter_state_pause()
+                        # """ (return) button to restart """
+                        # 'return' Button
                         elif event.key == K_RETURN:
-                            print("-- 重置游戏")
+                            print("-- Restart Game")
                             state = enter_state_restart()
                             score1 = 0
                             score2 = 0
                             score1_text.change_text("P1 : %s" % str(score1))
                             score2_text.change_text("P2 : %s" % str(score2))
-                    # 松开按键事件，flag = 0
+                    # --- Button release Events
                     elif event.type == KEYUP:
+                        # """ Release direction buttons (w,s) & (up,down) to stop <Bar>s """
+                        # 'w' button
                         if event.key == K_w and bar1.move_flag == 1:
                             bar1.move_flag = 0
+                        # 's' button
                         if event.key == K_s and bar1.move_flag == -1:
                             bar1.move_flag = 0
+                        # 'up' button
                         if event.key == K_UP and bar2.move_flag == 1:
                             bar2.move_flag = 0
+                        # 'down' button
                         if event.key == K_DOWN and bar2.move_flag == -1:
                             bar2.move_flag = 0
-                # Collision test
+                # -------- Collision test --------
                 for each_sprite in self.sprite_group:
                     if each_sprite == ball1:
                         continue
+                    # """ If the ball hit the bars """
                     if ball1.hit(each_sprite):
                         if not each_sprite.hit_flag:
                             each_sprite.hit(ball1)
@@ -258,70 +308,66 @@ class BeBarBall(object):
                         each_sprite.hit_flag = True
                     else:
                         each_sprite.hit_flag = False
-                # Win condition
+                # -------- Win condition --------
                 if ball1.rect.left < 0 or ball1.rect.right > self.WIDTH:
-                    # 到达左边，p2加分
+                    # Ball reaches Left, p2 score
                     if ball1.rect.left < 0:
                         print("--P2得分")
                         score2 += 1
                         score2_text.change_text("P2 : %s" % str(score2))
-                    # 到达右边，p1加分
+                    # Ball reaches Right, p1 score
                     elif ball1.rect.right > self.WIDTH:
                         print("--P1得分")
                         score1 += 1
                         score1_text.change_text("P1 : %s" % str(score1))
-                    # 音乐淡出，播放音效
+                    # Play sound
                     self.laugh_sound.play()
                     state = enter_state_restart()
-            """ Restart states"""
-            if state == enum_states.Restart:
-                # 倒计时文字显示刷新
-                for i in [3, 2, 1]:
-                    # 设置restart文字和321倒数文字
-                    number_text.change_text(str(i))
-                    # 刷新画面
-                    self.SCREEN.fill(BLACK)
-                    # 画bar1，bar2和ball
-                    for each_sprite in self.sprite_group:
-                        each_sprite.blit()
-                    score1_text.blit()
-                    score2_text.blit()
-                    number_text.blit()
-                    restart_text.blit()
-                    pygame.display.flip()
-                    # 延时1s，使倒数数字之间间隔为1s
-                    pygame.time.delay(1000)
-                    # 重新播放音乐
-                pygame.mixer.music.rewind()
-                pygame.mixer.music.play()
-                state = enter_state_normal()
-
-            """ Pause states"""
-            if state == enum_states.Pause:
+                # -------- Update items --------
+                self.sprite_group.update()
+            # ----------------  Pause states ----------------
+            elif state == EnumStates.Pause:
+                # -------- Player button event --------
                 for event in events:
-                    # 按键事件
+                    # --- Button press Events
                     if event.type == KEYDOWN:
+                        # 'space' button
                         if event.key == K_SPACE:
-                            print("--解除暂停")
-                            state = enter_state_normal()
+                            print("-- Resume Game")
                             pygame.mixer.music.unpause()
+                            state = enter_state_normal()
+                        # 'return' button
                         elif event.key == K_RETURN:
-                            print("--重置游戏")
-                            state = enter_state_restart()
+                            print("-- Restart Game")
                             score1 = 0
                             score2 = 0
                             score1_text.change_text("P1 : %s" % str(score1))
                             score2_text.change_text("P2 : %s" % str(score2))
-                self.CLOCK.tick(10)
-
+                            state = enter_state_restart()
+                self.CLOCK.tick(1000)
+            # ----------------  Restart states ----------------
+            elif state == EnumStates.Restart:
+                # -------- Count event --------
+                for event in events:
+                    if event.type == self.COUNT_EVENT:
+                        BeBarBall.COUNTS -= 1
+                        number_text.change_text(str(BeBarBall.COUNTS))
+                        if BeBarBall.COUNTS == 0:
+                            BeBarBall.COUNTS = 3
+                            pygame.mixer.music.rewind()
+                            pygame.mixer.music.play()
+                            state = enter_state_normal()
+            """ Blit objects """
             # Screen blit
             self.SCREEN.fill(BLACK)
             # Sprites
             for each_sprite in self.sprite_group:
                 each_sprite.blit()
-            # Update items
-            self.sprite_group.update()
+            # Texts
+            for each_text in self.text_group:
+                each_text.blit()
             pygame.display.flip()
+
             # Frame rate
             self.CLOCK.tick(100)
 
