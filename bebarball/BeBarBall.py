@@ -61,11 +61,11 @@ class BeBarBall(object):
         pygame.init()
         pygame.mixer.init()
         pygame.font.init()
-        pygame.display.set_caption("BeBarBall")
+        pygame.display.set_caption("MyShrew")
         pygame.mouse.set_visible(False)
 
         # Load Icon
-        icon = pygame.image.load("src/Bebarball.ico")
+        icon = pygame.image.load("src/bebarball.ico")
         pygame.display.set_icon(icon)
         # Load Music
         load_music("bg.ogg", MAIN_VOLUME)
@@ -89,12 +89,12 @@ class BeBarBall(object):
         """
         self.SCREEN.fill(COLOR_WAIT_SCREEN)
     
-        wait_flag_font = load_font("arialbd.ttf", 30)
+        start_font = load_font("arial.ttf", 30)
         title_font = load_font("arialbd.ttf", 150)
     
-        start_text = MyFont(self.SCREEN, wait_flag_font, "Press Any Key To Start",
+        start_text = MyFont(self.SCREEN, start_font, "Press Any Key To Start",
                             (self.WIDTH // 2, 3 * self.HEIGHT // 4), color=GRAY)
-        title_text = MyFont(self.SCREEN, title_font, "BeBarBall", (self.WIDTH // 2, self.HEIGHT // 2), color=WHITE)
+        title_text = MyFont(self.SCREEN, title_font, "My Shrew", (self.WIDTH // 2, self.HEIGHT // 2), color=WHITE)
     
         self.text_group.append(start_text)
         self.text_group.append(title_text)
