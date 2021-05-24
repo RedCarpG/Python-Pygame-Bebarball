@@ -166,11 +166,11 @@ class BeBarBall(object):
             for each in self.sprite_group:
                 each.reset()
             # Blit restart text
-            for index, each_text in enumerate(self.text_group):
+            for index, each in enumerate(self.text_group):
                 if index < 1:
-                    each_text.set_visible(False)
+                    each.set_visible(False)
                 else:
-                    each_text.set_visible(True)
+                    each.set_visible(True)
             return EnumStates.Restart
 
         # Enter function for Pause state
