@@ -19,6 +19,10 @@
     
     > pyinstaller setup.spec
 
+- or :
+
+Run directly `build.bat`, which does the same thing.
+
 ## 3. Play and share
 > Two folders are created:
 >           

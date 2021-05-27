@@ -4,5 +4,5 @@ venv
 __pycache__
 .idea
 backup
-build/build
-build/dist
+build_tool/build
+build_tool/dist

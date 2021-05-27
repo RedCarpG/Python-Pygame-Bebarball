@@ -5,21 +5,23 @@ block_cipher = None
 # - Script files - #
 py_files = [
     '../bebarball/BeBarBall.py',
-    '../bebarball/bin/bbb_local.py',
-    '../bebarball/bin/bbb_items.py',
-    '../bebarball/bin/bbb_myfont.py',
-    '../bebarball/bin/bbb_sound.py',
-    '../bebarball/bin/bbb_frozen_dir.py',
-    '../bebarball/bin/__init__.py'
+    '../bebarball/src/bbb_local.py',
+    '../bebarball/src/bbb_items.py',
+    '../bebarball/src/bbb_myfont.py',
+    '../bebarball/src/bbb_sound.py',
+    '../bebarball/src/bbb_frozen_dir.py',
+    '../bebarball/src/__init__.py'
 ]
 # - Source files - #
 add_files = [
-    ('../bebarball/src/font/*.ttf','src/font'),
-    ('../bebarball/src/sound/*.wav','src/sound'),
-    ('../bebarball/src/sound/*.ogg','src/sound'),
-    ('../bebarball/src/sound/*.mp3','src/sound'),
-    ('../bebarball/src/bebarball.ico','src')
+    ('../bebarball/data/font/*.ttf','data/font'),
+    ('../bebarball/data/sound/*.wav','data/sound'),
+    ('../bebarball/data/sound/*.ogg','data/sound'),
+    ('../bebarball/data/sound/*.mp3','data/sound'),
+    ('../bebarball/data/bebarball.ico','data')
 ]
+
+icon_file = '../bebarball/data/Bebarball.ico'
 
 a = Analysis(py_files,
              pathex=['.'],
@@ -47,7 +49,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False,
-          icon='../bebarball/src/Bebarball.ico')
+          icon=icon_file)
 
 coll = COLLECT(exe,
                a.binaries,

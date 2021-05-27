@@ -6,7 +6,7 @@ from pygame.compat import geterror
 from .bbb_local import *
 from .bbb_frozen_dir import main_dir
 
-font_dir = os.path.join(main_dir, 'src\\font')
+font_dir = os.path.join(main_dir, 'data\\font')
 
 
 def load_font(name, size):
