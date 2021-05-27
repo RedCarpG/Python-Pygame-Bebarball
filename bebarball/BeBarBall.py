@@ -9,10 +9,10 @@ from pygame.locals import *
 from enum import Enum
 from random import randint
 
-from bin.bbb_sound import load_sound, load_music
-from bin.bbb_myfont import load_font, MyFont
-from bin.bbb_items import Ball, Bar
-from bin.bbb_local import *
+from src.bbb_sound import load_sound, load_music
+from src.bbb_myfont import load_font, MyFont
+from src.bbb_items import Ball, Bar
+from src.bbb_local import *
 
 if not pygame.font:
     print('Warning, fonts disabled')
@@ -63,7 +63,7 @@ class BeBarBall(object):
         pygame.mouse.set_visible(False)
 
         # Load Icon
-        icon = pygame.image.load("src/bebarball.ico")
+        icon = pygame.image.load("data/bebarball.ico")
         pygame.display.set_icon(icon)
         # Load Music
         load_music("bg.ogg", MAIN_VOLUME)
