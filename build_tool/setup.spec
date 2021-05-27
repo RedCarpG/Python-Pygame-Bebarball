@@ -14,12 +14,14 @@ py_files = [
 ]
 # - Source files - #
 add_files = [
-    ('../bebarball/data/font/*.ttf','src/font'),
-    ('../bebarball/data/sound/*.wav','src/sound'),
-    ('../bebarball/data/sound/*.ogg','src/sound'),
-    ('../bebarball/data/sound/*.mp3','src/sound'),
-    ('../bebarball/data/bebarball.ico','src')
+    ('../bebarball/data/font/*.ttf','data/font'),
+    ('../bebarball/data/sound/*.wav','data/sound'),
+    ('../bebarball/data/sound/*.ogg','data/sound'),
+    ('../bebarball/data/sound/*.mp3','data/sound'),
+    ('../bebarball/data/bebarball.ico','data')
 ]
+
+icon_file = '../bebarball/data/Bebarball.ico'
 
 a = Analysis(py_files,
              pathex=['.'],
@@ -47,7 +49,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False,
-          icon='../bebarball/src/Bebarball.ico')
+          icon=icon_file)
 
 coll = COLLECT(exe,
                a.binaries,
