@@ -13,7 +13,7 @@
   
 
     > cd $(current_floder)
-    > pip install requirements.txt
+    > pip install -r requirements.txt
 ## 2. Build
 > Build **executable**
     

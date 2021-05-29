@@ -24,7 +24,7 @@
    
         > cd $(current_floder)
    
-        > pip install requirements.txt
+        > pip install -r requirements.txt
    
         > cd bebarball
    
